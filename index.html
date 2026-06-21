@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>welcome.24</title>
+
+<style>
+body{
+margin:0;
+font-family:"Microsoft YaHei",sans-serif;
+background:#ffe6f0;
+overflow-x:hidden;
+color:#5d4a4a;
+transition:0.5s;
+}
+
+section{
+min-height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+padding:30px;
+text-align:center;
+}
+
+.book{
+background:white;
+padding:40px;
+border-radius:25px;
+box-shadow:0 0 30px rgba(0,0,0,0.08);
+max-width:800px;
+}
+
+.hidden{display:none;}
+
+h1{font-size:3em;}
+
+button{
+padding:12px 26px;
+border:none;
+border-radius:30px;
+background:#ffb6c1;
+color:white;
+cursor:pointer;
+margin:6px;
+transition:0.2s;
+}
+button:hover{transform:scale(1.05);}
+
+input{
+padding:10px;
+border-radius:10px;
+border:1px solid #ddd;
+text-align:center;
+}
+
+#letter{
+font-size:20px;
+line-height:2;
+white-space:pre-wrap;
+}
+
+.sakura{
+position:fixed;
+top:-10px;
+font-size:20px;
+animation:fall linear infinite;
+pointer-events:auto;
+cursor:pointer;
+}
+
+@keyframes fall{
+to{transform:translateY(110vh);}
+}
+
+.end{
+margin-top:40px;
+font-size:26px;
+color:#d67aa3;
+}
+
+/* 🌙黑屏 */
+body.dark{
+background:black !important;
+color:white !important;
+}
+
+/* 😭 */
+.cry{
+position:fixed;
+font-size:30px;
+animation:fall 2s linear infinite;
+pointer-events:none;
+z-index:9999;
+}
+
+/* 我错了按钮 */
+#cryBtn{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+z-index:10000;
+padding:15px 25px;
+border:none;
+border-radius:20px;
+background:white;
+cursor:pointer;
+display:none;
+color:black;
+}
+
+/* 💬错误提示 */
+#msgBox{
+position:fixed;
+top:18%;
+left:50%;
+transform:translateX(-50%);
+background:rgba(0,0,0,0.75);
+color:white;
+padding:14px 20px;
+border-radius:14px;
+font-size:18px;
+z-index:99999;
+display:none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 💬提示框 -->
+<div id="msgBox"></div>
+
+<!-- 😭按钮 -->
+<button id="cryBtn" onclick="exitCryMode()">我错了</button>
+
+<!-- 第一页 -->
+<section id="dayPage">
+<div class="book">
+<h1>🌸 welcome.24 🌸</h1>
+<h2 id="dayText"></h2>
+
+<br>
+<input id="nameInput" placeholder="keykwin">
+<br><br>
+<button onclick="checkName()">进入</button>
+</div>
+</section>
+
+<!-- Q1 -->
+<section id="q1" class="hidden">
+<div class="book">
+<p>我们已经认识多久了？</p>
+
+<button onclick="wrong1('一个月')">一个月</button>
+<button onclick="right('q2')">一年</button>
+<button onclick="wrong1('一百年')">一百年</button>
+</div>
+</section>
+
+<!-- Q2 -->
+<section id="q2" class="hidden">
+<div class="book">
+<p>你爱我吗？</p>
+
+<button onclick="right('q3')">爱</button>
+<button onclick="wrong2()">不爱</button>
+</div>
+</section>
+
+<!-- Q3 -->
+<section id="q3" class="hidden">
+<div class="book">
+<p>准备好了吗？</p>
+<button onclick="showLetter()">准备好了</button>
+</div>
+</section>
+
+<!-- 信 -->
+<section id="letterPage" class="hidden">
+<div class="book">
+<h2>给 Keykwin</h2>
+<div id="letter"></div>
+
+<div class="end">
+End of Chapter One ✨<br>
+To Be Continued...
+</div>
+</div>
+</section>
+
+<script>
+
+/* 🌸天数 */
+const startDate = new Date("2025-06-24");
+const today = new Date();
+const diff = Math.floor((today - startDate)/(1000*60*60*24));
+document.getElementById("dayText").innerText =
+`今天是我们相遇的第 ${diff} 天`;
+
+/* 💬显示错误文字 */
+function showMessage(text){
+let box=document.getElementById("msgBox");
+box.innerText=text;
+box.style.display="block";
+
+setTimeout(()=>{
+box.style.display="none";
+},1200);
+}
+
+/* 🌙哭泣系统 */
+let cryTimer=null;
+
+function enterCryMode(){
+document.body.classList.add("dark");
+document.getElementById("cryBtn").style.display="block";
+
+cryTimer=setInterval(()=>{
+for(let i=0;i<6;i++){
+let c=document.createElement("div");
+c.className="cry";
+c.innerHTML="😭";
+c.style.left=Math.random()*100+"vw";
+c.style.top="-20px";
+document.body.appendChild(c);
+}
+},180);
+}
+
+function exitCryMode(){
+document.body.classList.remove("dark");
+document.getElementById("cryBtn").style.display="none";
+
+clearInterval(cryTimer);
+document.querySelectorAll(".cry").forEach(e=>e.remove());
+}
+
+/* 🌸登录 */
+function checkName(){
+let v=document.getElementById("nameInput").value.trim().toLowerCase();
+if(v==="keykwin"){
+document.getElementById("dayPage").classList.add("hidden");
+document.getElementById("q1").classList.remove("hidden");
+}else{
+alert("不是这个名字哦");
+}
+}
+
+/* ❌错误（先显示文字，再哭） */
+function wrong1(x){
+showMessage(`小笨蛋不是这个¯꒳¯（${x}）`);
+setTimeout(()=>enterCryMode(),1200);
+}
+
+function wrong2(){
+showMessage("好难过……我也不爱你了！哼");
+setTimeout(()=>enterCryMode(),1200);
+}
+
+/* ✔正确 */
+function right(next){
+exitCryMode();
+
+document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
+document.getElementById(next).classList.remove("hidden");
+}
+
+/* 📖信 */
+function showLetter(){
+document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
+document.getElementById("letterPage").classList.remove("hidden");
+
+const text=`一周年快乐。
+
+时间真的过得比想象中快一点，好像还没意识到，就已经走到这个节点了。
+
+这一年里在和你一起的时候有很多瞬间我都记得很清楚，因为它们都和你有关。
+
+谢谢你出现在这一段时间里，也谢谢你愿意让我在你的生活里占有一点位置，虽然可能从未说过，但我必须说你也在我的心里我的生命里占了很大的位置。
+
+有些时候我可能不太会表达，但其实我一直都很在意和你之间的这些时刻。
+
+如果说这一年有什么让我觉得很幸运的事，那大概就是遇见你、以及和你慢慢相熟的过程。
+
+虽然你说不说太多因为怕我等下就不会珍惜了，但我想说，每一次你说爱我的时候我的心脏都像停了一瞬一样，开心得脑袋空空的，不知道要说什么，我喜欢你说，因為那样我会感觉我是真的真的被在乎的，有时候我不知道我就好容易乱想。
+
+我就想说一下，在今天，能不能说一下，你爱我。
+
+至于未来，我不想说得太重。
+
+只是希望我们还能这样，一点一点地继续走下去，如果可以的话，以后也还想和你一起过很多个这样的日子。
+
+一周年快乐，我爱你。
+
+以及，谢谢你。`;
+
+let i=0;
+let box=document.getElementById("letter");
+
+let timer=setInterval(()=>{
+box.innerHTML+=text.charAt(i);
+i++;
+if(i>=text.length)clearInterval(timer);
+},45);
+}
+
+/* 🌸樱花 + 苹果 */
+for(let i=0;i<45;i++){
+let d=document.createElement("div");
+
+let r=Math.random();
+
+if(r<0.015){
+d.innerHTML="🍎";
+}else if(r<0.04){
+d.innerHTML="🍏";
+}else{
+d.innerHTML="🌸";
+}
+
+d.className="sakura";
+d.style.left=Math.random()*100+"vw";
+d.style.animationDuration=5+Math.random()*10+"s";
+
+d.onclick=function(){
+if(this.innerHTML==="🍏"){
+alert("被你发现啦，我爱你");
+}
+if(this.innerHTML==="🍎"){
+alert("求求你啦也爱我好不好");
+}
+}
+
+document.body.appendChild(d);
+}
+
+</script>
+
+</body>
+</html>
